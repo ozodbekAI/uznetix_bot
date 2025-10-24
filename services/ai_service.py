@@ -1,7 +1,7 @@
-# services/ai_service.py
 import json
 import logging
 from typing import Dict, Any, List, Optional, Tuple
+import httpx
 from openai import AsyncOpenAI
 from config import settings
 from bot.utils.text_utils import convert_to_uzbek_script
@@ -13,7 +13,18 @@ class AIService:
     """AI service for conversational interviews and recommendations in Uzbek (Latin/Cyrillic)"""
     
     def __init__(self):
-        self.client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        proxy_url = "http://11f1wsnM:mddvZFkM@156.233.82.121:63464"
+            
+        http_client = httpx.AsyncClient(
+                proxy=proxy_url,
+                timeout=60.0, 
+                verify=False  
+            )
+            
+        self.client = AsyncOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                http_client=http_client
+            )
         self.model = settings.OPENAI_MODEL or "gpt-5o-mini"
         self.max_tokens = settings.OPENAI_MAX_TOKENS or 2000
         self.temperature = 0.7
